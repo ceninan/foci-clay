@@ -8,10 +8,10 @@ public import foci.device.power.*;
 // DeviceInfo
 //
 
-record DeviceInfo {
-    udi : String;
-    syspath : String;
-}
+record DeviceInfo (
+    udi : String,
+    syspath : String,
+);
 
 variant Device;
 

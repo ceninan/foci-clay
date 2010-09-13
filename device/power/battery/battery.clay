@@ -11,19 +11,19 @@ import foci.device.*;
 
 instance Device = Battery;
 
-record Battery {
-    info : DeviceInfo;
+record Battery (
+    info : DeviceInfo,
 
-    name : String;
-    technology : String;
+    name : String,
+    technology : String,
 
-    manufacturer : String;
-    modelName : String;
-    serialNumber : String;
+    manufacturer : String,
+    modelName : String,
+    serialNumber : String,
 
-    voltageMinDesign : Int64;
-    chargeFullDesign : Int64;
-}
+    voltageMinDesign : Int64,
+    chargeFullDesign : Int64,
+);
 
 overload status  (x:Battery) = readAttr(x, "status");
 overload present?(x:Battery) = readAttr(x, "present");
