@@ -1,0 +1,90 @@
+import io.directories.*;
+import numbers.parser.*;
+
+import foci.device.*;
+
+
+
+//
+// Battery
+//
+
+instance Device = Battery;
+
+record Battery {
+    info : DeviceInfo;
+
+    name : String;
+    technology : String;
+
+    manufacturer : String;
+    modelName : String;
+    serialNumber : String;
+
+    voltageMinDesign : Int64;
+    chargeFullDesign : Int64;
+}
+
+overload status  (x:Battery) = readAttr(x, "status");
+overload present?(x:Battery) = readAttr(x, "present");
+
+voltageNow(x:Battery) = parseInt64(readAttr(x, "voltage_now"));
+currentNow(x:Battery) = parseInt64(readAttr(x, "current_now"));
+chargeFull(x:Battery) = parseInt64(readAttr(x, "charge_full"));
+chargeNow (x:Battery) = parseInt64(readAttr(x, "charge_now"));
+
+chargePercent(x:Battery) = Float(chargeNow(x)) / Float(chargeFull(x)) * 100;
+
+
+
+//
+// Constructors
+//
+
+[T | String?(T)]
+overload Battery(x:T) {
+    var ret = Battery();
+    
+    ret.info.syspath = String(x);
+    ret.info.udi = String(x);
+
+    for (x in lines(File(sys() + ret.info.syspath + "/uevent"))) {
+        var l = split(x, "="[0]);
+        var key = l[0];
+        var value = trim("\n", l[1]);
+
+        if      (key == "POWER_SUPPLY_NAME"              ) ret.name = value;
+        else if (key == "POWER_SUPPLY_TECHNOLOGY"        ) ret.technology = value;
+        else if (key == "POWER_SUPPLY_MANUFACTURER"      ) ret.manufacturer = value;
+        else if (key == "POWER_SUPPLY_MODEL_NAME"        ) ret.modelName = value;
+        else if (key == "POWER_SUPPLY_SERIAL_NUMBER"     ) ret.serialNumber = value;
+        else if (key == "POWER_SUPPLY_VOLTAGE_MIN_DESIGN") ret.voltageMinDesign = parseInt64(value);
+        else if (key == "POWER_SUPPLY_CHARGE_FULL_DESIGN") ret.chargeFullDesign = parseInt64(value);
+    }
+    return ret;
+}
+
+
+
+//
+// battery?
+//
+
+battery?(x) {
+    for (l in lines(File(sys() + "/class/power_supply/" + x + "/type")))
+        if (l == "Battery\n") return true;
+    return false;
+} 
+
+
+
+//
+// findDevices
+//
+
+overload findDevices(static Battery) {
+    var v = Vector[Battery]();
+    for (x in filter(battery?, directoryListing(sys() + "/class/power_supply")))
+        push(v, Battery("/class/power_supply/" + x));
+    return v;
+}

@@ -1,0 +1,42 @@
+import libc;
+
+public import foci.device.power.*;
+
+
+
+//
+// DeviceInfo
+//
+
+record DeviceInfo {
+    udi : String;
+    syspath : String;
+}
+
+variant Device;
+
+procedure findDevices;
+
+
+
+procedure status;
+procedure present?;
+
+
+
+//
+// Util
+//
+
+sys() {
+    var env = libc.getenv(cstring("SYSPATH"));
+    if (null?(env))
+        return String("/sys");
+    return String(env);
+}
+
+[T | String?(T)]
+readAttr(x, attr:T) {
+    var l = readLine(File(sys() + x.info.syspath + "/" + attr));
+    return trim("\n", l);
+}
