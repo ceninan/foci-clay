@@ -1,5 +1,5 @@
-An idea I had for a "platform". Would consist of various "foci" (DeviceFocus, InputFocus, GraphicFocus, etc.) that'd interact with lower-level OS-specific features (or more unrealistically and less useful, be the native API of a new toy OS).
+An idea I had for a "platform". Would consist of various "foci" (DeviceFocus, InputFocus, GraphicFocus, etc.) that would interact with lower-level OS-specific features (or more unrealistically and less useful, be the native API of a new toy OS).
 
-I'm not working on this anymore, but maybe I'll pick it up again sometime.
+I am not working on this anymore, but maybe I will pick it up again sometime.
 
 foci.device -- tiny beginnings of DeviceFocus
